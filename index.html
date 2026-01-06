@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Observasi TK An-Najah</title>
+
+<style>
+/* RESET */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  margin: 0;
+  padding: 0;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 420px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  min-height: 500px;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.logo {
+  width: 70px;
+}
+
+/* STEP */
+.step {
+  display: none;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.35s ease;
+}
+.step.active {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+}
+.step.back {
+  transform: translateX(0px);
+}
+
+/* FORM */
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px; /* penting agar mobile tidak auto zoom */
+}
+
+/* BUTTON */
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+.next {
+  background: #4f46e5;
+  color: white;
+}
+.prev {
+  background: #e5e7eb;
+}
+.next:hover { background: #4338ca; }
+.prev:hover { background: #d1d5db; }
+
+/* RESULT */
+.result {
+  text-align: center;
+}
+.success { color: green; }
+.error { color: red; }
+.summary {
+  text-align: left;
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+/* ========================= */
+/* 📱 MOBILE FULL SCREEN */
+/* ========================= */
+@media (max-width: 600px) {
+  body {
+    background: white;
+  }
+
+  .container {
+    max-width: 100%;
+    margin: 0;
+    min-height: 100vh;
+    border-radius: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .header h2 {
+    font-size: 20px;
+  }
+
+  .header p {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 17px;
+  }
+}
+
+/* ========================= */
+/* 🔄 LOADING SPINNER */
+/* ========================= */
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading p {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #374151;
+}
+
+.spinner {
+  width: 45px;
+  height: 45px;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0); }
+  100% { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none;
+}
+
+/* ========================= */
+/* 📌 FOOTER */
+/* ========================= */
+.footer {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  padding: 15px 10px;
+}
+
+/* Mobile: footer tetap di bawah */
+@media (max-width: 600px) {
+  .footer {
+    font-size: 12px;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <img src="https://i.ibb.co.com/PZYspXps/logo-tk-1.png" class="logo">
+    <h2>TK Swasta IT SUNNAH AN-Najah</h2>
+    <p>Form Observasi Calon Santri</p>
+    <br> </br>
+    <p>  </p>
+  </div>
+
+  <form id="surveyForm">
+
+
+<!-- DAFTAR PERTANYAAN -->
+<!-- PERTANYAAN 1 -->
+    <div class="step active">
+      <label>Nama Ananda</label>
+      <input type="text" name="q1" required>
+      <div class="buttons">
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+<!-- PERTANYAAN 2 dst-->
+
+    <div class="step">
+      <label>Nama Orang Tua/Wali</label>
+      <input type="text" name="q2" required>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>NO. HP/WA Orang Tua/Wali</label>
+      <input type="text" name="q3" required>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Darimana Ayah/Bunda tau mengenai Penerimaan Santri Baru di TK SWASTA IT SUNNAH AN-NAJAH ?</label>
+      <select name="q4" required>
+        <option value="">-- Pilih --</option>
+        <option>sosial media</option>
+        <option>spanduk</option>
+        <option>guru/karyawan</option>
+        <option>teman</option>
+        <option>tetangga</option>
+      </select>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apa yang melatar belakangi Ayah/Bunda memilih TK SWASTA IT SUNNAH AN-NAJAH sebagai sekolah untuk Ananda?</label>
+      <textarea name="q5"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Dengan memilih TK SWASTA IT SUNNAH AN-NAJAH sebagai sekolah Ananda, apa harapan Ayah/Bunda?</label>
+      <textarea name="q6"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bagaimana Ayah/Bunda menanamkan TAUHID kepada Ananda?</label>
+      <textarea name="q7"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apakah Ayah/Bunda memerintahkan Ananda SHOLAT dan mengajarkan tata caranya kepada Ananda?</label>
+      <textarea name="q8"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apakah Ayah/Bunda menemani dan membimbing Ananda dalam aktifitas ibadahnya (seperti saat wudhu, sholat, mengaji, dll) ?</label>
+      <textarea name="q9"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bagaimana cara Ayah/Bunda membiasakan Ananda berpuasa di bulan Ramadhan?</label>
+      <textarea name="q10"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bagaimana Ayah/Bunda mengajarkan adab dan akhlak kepada Ananda?</label>
+      <textarea name="q11"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apa yang Ayah/bunda ajarkan tentang adab-adab di kamar mandi ?</label>
+      <textarea name="q12"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apa yang Ayah/bunda ajarkan tentang adab-adab makan ?</label>
+      <textarea name="q13"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apa yang Ayah/bunda ajarkan tentang adab-adab berbicara ?</label>
+      <textarea name="q14"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Jam berapa biasa Ananda belajar dan mengaji di rumah? Dengan siapa?</label>
+      <textarea name="q15"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bentuk penghargaan seperti apa yang Ayah/Bunda berikan bila Ananda berperilaku baik  atau berprestasi?</label>
+      <textarea name="q16"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bila Ananda bersikap kurang baik, bagaimana cara Ayah/Bunda menasehati ?</label>
+      <textarea name="q17"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Menurut Ayah/Bunda, potensi/bakat apa yang dimiliki Ananda yang Ayah/Bunda ingin dikembangkan?</label>
+      <textarea name="q18"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Siapa nama Ananda, Nama panggilannya ?</label>
+      <textarea name="q19"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apakah ada tahap perkembangan yang terlewati? Bila ada,  apa penyebabnya?</label>
+      <textarea name="q20"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Sewaktu kecil, apa pernah mengalami sakit serius sehingga harus dirawat di rumah sakit ?</label>
+      <textarea name="q21"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apakah Ananda memiliki fisik yang lemah sehingga perlu perhatian khusus?</label>
+      <textarea name="q22"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apakah kelebihan yang dimiliki oleh ananda yang bisa di kembangkan baik dirumah maupun disekolah?</label>
+      <textarea name="q23"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Apakah kekurangan ananda yang ayah dan bunda ketahui  ? ( dari segi social, emosional, dan pengetahuan)</label>
+      <textarea name="q24"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bersediakah Ayah/Bunda mendukung program yang telah ditetapkan sekolah untuk Ananda ?</label>
+      <select name="q25" required>
+        <option value="">-- Pilih --</option>
+        <option>bersedia</option>
+        <option>tidak bersedi</option>
+        <option>lain-lain</option>
+      </select>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Program parenting seperti apa yang Ayah/Bunda harapkan dapat membantu menyelaraskan Pendidikan di rumah dan sekolah?</label>
+      <textarea name="q26"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bersediakan Ayah/Bunda menyelaraskan pola asuh di sekolah dengan di rumah?</label>
+      <select name="q27" required>
+        <option value="">-- Pilih --</option>
+        <option>bersedia</option>
+        <option>tidak bersedi</option>
+        <option>lain-lain</option>
+      </select>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bersediakan Ayah/Bunda membimbing Ananda untuk MUROJA’AH (mengulang hafalan) dengan di rumah?</label>
+      <select name="q28" required>
+        <option value="">-- Pilih --</option>
+        <option>bersedia</option>
+        <option>tidak bersedi</option>
+        <option>lain-lain</option>
+      </select>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Menurut Ayah/Bunda faktor apa sajakah yang mendukung keberhasilan pendidikan Ananda di sekolah ?</label>
+      <textarea name="q29"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Jika Ananda suatu saat mengalami permasalahan di sekolah, baik dari segi akhlak maupun pelajaran, bersediakah Ayah/Bunda bersama guru bekerjasama menyelesaikan masalah tersebut?</label>
+      <select name="q30" required>
+        <option value="">-- Pilih --</option>
+        <option>bersedia</option>
+        <option>tidak bersedi</option>
+        <option>lain-lain</option>
+      </select>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Bagaimana pengamatan Ayah/Bunda tentang gedung, sarana dan prasarana TK SWASTA IT SUNNAH AN-NAJAH? Apa yang perlu ditingkakan? </label>
+      <textarea name="q31"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Kurikulum dan program-program sekolah (seperti tahfidz, rihlah, dll) di An-Najah apakah Ayah/Bunda sudah tahu dan siap mendukungnya?</label>
+      <textarea name="q32"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>Pembiayaan di An-Najah muncul berdasarkan program yang ada, bagaimana pemahaman Ayah/Bunda tentang hal ini ?</label>
+      <textarea name="q33"></textarea>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <label>An-Najah mengadakan program orangtua asuh yang bertujuan memberikan bantuan untuk pembiayaan pendidikan pada santri dhuafa (kurang mampu) dan anak yatim yang bersekolah di An-Najah. Orangtua santri yang mengikuti program ini memberikan infaq wajib yang disalurkan untuk pembiayaan  pendidikan anak asuh sampai mereka lulus. Bersediakah Ayah/Bunda mengikuti program ini ?</label>
+      <select name="q34">
+        <option value="">-- Pilih --</option>
+        <option>bersedia</option>
+        <option>tidak bersedi</option>
+        <option>lain-lain</option>
+      </select>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="button" class="next" onclick="nextStep()">Lanjut</button>
+      </div>
+    </div>
+
+
+<!-- PERTANYAAN TERAHIR -->
+
+    <div class="step">
+      <label>Bila bersedia, silahkan Ayah/Bunda pilih besaran sumbangannya.</label>
+      <select name="q35">
+        <option value="">-- Pilih --</option>
+        <option>Rp. 20.000/bulan</option>
+        <option>Rp. 50.000/bulan</option>
+        <option>Rp. 80.000/bulan</option>
+        <option>Rp. 100.000/bulan</option>
+      </select>
+      <div class="buttons">
+        <button type="button" class="prev" onclick="prevStep()">Kembali</button>
+        <button type="submit" class="next">Kirim</button>
+      </div>
+    </div>
+
+  </form>
+<!-- DAFTAR PERTANYAAN SAMPAI DISINI-->
+
+  <div id="result" class="result" style="display:none;"></div>
+
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay" class="loading hidden">
+  <div class="spinner"></div>
+  <p>Mengirim data...</p>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  © 2026 Yayasan An-Najah Ihya As-Sunnah
+</footer>
+
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzetZusvc8W9j8rf-cyVb_V1rpB7VaPjwcbECAxALornrv-V2VoUkNuF92qbl_PIsI_Mw/exec';
+
+let currentStep = 0;
+const steps = document.querySelectorAll('.step');
+const form = document.getElementById('surveyForm');
+const result = document.getElementById('result');
+let savedData = {};
+
+function showStep(index, direction = 'next') {
+  steps.forEach(step => step.classList.remove('active', 'back'));
+
+  if (direction === 'back') {
+    steps[index].classList.add('back');
+  }
+
+  steps[index].classList.add('active');
+}
+
+function nextStep() {
+  const inputs = steps[currentStep].querySelectorAll('input, select, textarea');
+  for (let input of inputs) {
+    if (!input.checkValidity()) {
+      input.reportValidity();
+      return;
+    }
+  }
+  currentStep++;
+  showStep(currentStep, 'next');
+}
+
+function prevStep() {
+  currentStep--;
+  showStep(currentStep, 'back');
+}
+
+const loading = document.getElementById('loadingOverlay');
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+
+  savedData = Object.fromEntries(new FormData(form).entries());
+
+  // TAMPILKAN SPINNER
+  loading.classList.remove('hidden');
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(savedData)
+    });
+
+    const json = await res.json();
+
+    // HILANGKAN SPINNER
+    loading.classList.add('hidden');
+
+    if (json.status === 'success') {
+      showSuccess();
+    } else {
+      showError();
+    }
+
+  } catch (error) {
+    // HILANGKAN SPINNER
+    loading.classList.add('hidden');
+    showError();
+  }
+});
+
+
+function showSuccess() {
+  form.style.display = 'none';
+  result.style.display = 'block';
+  result.className = 'result success';
+  result.innerHTML = `
+    <h3>Terima kasih 🙏</h3>
+    <p>Data berhasil dikirim.</p>
+
+    <div class="summary">
+      <b>Nama Ananda :</b> ${savedData.q1}<br>
+      <b>Nama Orang Tua/Wali :</b> ${savedData.q2}<br>
+      <b>NO. HP/Wa Orang Tua/Wal :</b> ${savedData.q3}<br>
+      <b>dan seterusnya, silahkan di download jika ingin melihat data anda.<br><p>
+    </div>
+
+    <button class="next" onclick="downloadDoc()">Download Hasil (.doc)</button>
+  `;
+}
+
+function showError() {
+  result.style.display = 'block';
+  result.className = 'result error';
+  result.innerHTML = `
+    <h3>Terjadi Masalah ⚠️</h3>
+    <p>Silakan refresh dan coba lagi.</p>
+  `;
+}
+
+function downloadDoc() {
+  const text = `
+Data Observasi
+
+Nama Ananda : ${savedData.q1}
+Nama Orang Tua/Wali : ${savedData.q2}
+NO. HP/Wa Orang Tua/Wal : ${savedData.q3}
+Darimana Ayah/Bunda tahu mengenai Penerimaan Santri Baru di TK SWASTA IT SUNNAH AN-NAJAH ? : ${savedData.q4}
+Apa yang melatar belakangi Ayah/Bunda memilih TK SWASTA IT SUNNAH AN-NAJAH sebagai sekolah untuk Ananda? : ${savedData.q5}
+Dengan memilih TK SWASTA IT SUNNAH AN-NAJAH sebagai sekolah Ananda, apa harapan Ayah/Bunda? : ${savedData.q6}
+Bagaimana Ayah/Bunda menanamkan TAUHID kepada Ananda? : ${savedData.q7}
+Apakah Ayah/Bunda memerintahkan Ananda SHOLAT dan mengajarkan tata caranya kepada Ananda? : ${savedData.q8}
+Apakah Ayah/Bunda menemani dan membimbing Ananda dalam aktifitas ibadahnya (seperti saat wudhu, sholat, mengaji, dll) ? : ${savedData.q9}
+Bagaimana cara Ayah/Bunda membiasakan Ananda berpuasa di bulan Ramadhan? : ${savedData.q10}
+Bagaimana Ayah/Bunda mengajarkan adab dan akhlak kepada Ananda? : ${savedData.q11}
+Apa yang Ayah/bunda ajarkan tentang adab-adab di kamar mandi ? : ${savedData.q12}
+Apa yang Ayah/bunda ajarkan tentang adab-adab makan ? : ${savedData.q13}
+Apa yang Ayah/bunda ajarkan tentang adab-adab berbicara ? : ${savedData.q14}
+Jam berapa biasa Ananda belajar dan mengaji di rumah? Dengan siapa? : ${savedData.q15}
+Bentuk penghargaan seperti apa yang Ayah/Bunda berikan bila Ananda berperilaku baik  atau berprestasi? : ${savedData.q16}
+Bila Ananda bersikap kurang baik, bagaimana cara Ayah/Bunda menasehati ? : ${savedData.q17}
+Menurut Ayah/Bunda, potensi/bakat apa yang dimiliki Ananda yang Ayah/Bunda ingin dikembangkan? : ${savedData.q18}
+Siapa nama Ananda, Nama panggilannya ? : ${savedData.q19}
+Apakah ada tahap perkembangan yang terlewati? Bila ada,  apa penyebabnya? : ${savedData.q20}
+Sewaktu kecil, apa pernah mengalami sakit serius sehingga harus dirawat di rumah sakit ? : ${savedData.q21}
+Apakah Ananda memiliki fisik yang lemah sehingga perlu perhatian khusus? : ${savedData.q22}
+Apakah kelebihan yang dimiliki oleh ananda yang bisa di kembangkan baik dirumah maupun disekolah? : ${savedData.q23}
+Apakah kekurangan ananda yang ayah dan bunda ketahui  ? ( dari segi social, emosional, dan pengetahuan) : ${savedData.q24}
+Bersediakah Ayah/Bunda mendukung program yang telah ditetapkan sekolah untuk Ananda ? : ${savedData.q25}
+Program parenting seperti apa yang Ayah/Bunda harapkan dapat membantu menyelaraskan Pendidikan di rumah dan sekolah? : ${savedData.q26}
+Bersediakan Ayah/Bunda menyelaraskan pola asuh di sekolah dengan di rumah? : ${savedData.q27}
+Bersediakan Ayah/Bunda membimbing Ananda untuk MUROJA’AH (mengulang hafalan) dengan di rumah? : ${savedData.q28}
+Menurut Ayah/Bunda faktor apa sajakah yang mendukung keberhasilan pendidikan Ananda di sekolah ? : ${savedData.q29}
+Jika Ananda suatu saat mengalami permasalahan di sekolah, baik dari segi akhlak maupun pelajaran, bersediakah Ayah/Bunda bersama guru bekerjasama menyelesaikan masalah tersebut? : ${savedData.q30}
+Bagaimana pengamatan Ayah/Bunda tentang gedung, sarana dan prasarana TK SWASTA IT SUNNAH AN-NAJAH? Apa yang perlu ditingkakan?  : ${savedData.q31}
+Kurikulum dan program-program sekolah (seperti tahfidz, rihlah, dll) di An-Najah apakah Ayah/Bunda sudah tahu dan siap mendukungnya? : ${savedData.q32}
+Pembiayaan di An-Najah muncul berdasarkan program yang ada, bagaimana pemahaman Ayah/Bunda tentang hal ini ? : ${savedData.q33}
+An-Najah mengadakan program orangtua asuh yang bertujuan memberikan bantuan untuk pembiayaan pendidikan pada santri dhuafa (kurang mampu) dan anak yatim yang bersekolah di An-Najah. Orangtua santri yang mengikuti program ini memberikan infaq wajib yang disalurkan untuk pembiayaan  pendidikan anak asuh sampai mereka lulus. Bersediakah Ayah/Bunda mengikuti program ini ? : ${savedData.q34}
+Bila bersedia, silahkan Ayah/Bunda pilih besaran sumbangannya. : ${savedData.q35}
+  `;
+  const blob = new Blob([text], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data-observasi.doc';
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+</script>
+
+
+
+</body>
+</html>
